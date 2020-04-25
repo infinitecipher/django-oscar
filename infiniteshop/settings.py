@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from django.utils.translation import ugettext_lazy as _
 from oscar.defaults import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -177,3 +178,66 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
+
+
+DEFAULT_FROM_EMAIL = "Infinite Cipher <no-reply@infinitecipher.com>"
+
+
+# OSCAR SETTINGS
+OSCAR_SHOP_NAME = "Infinite Cipher Ecommerce Starter Kit"
+OSCAR_SHOP_TAGLINE = "Development"
+OSCAR_DEFAULT_CURRENCY = 'KWD'
+OSCAR_CURRENCY_FORMAT = {
+    'KWD': {
+        'currency_digits': False,
+        'format_type': "accounting",
+        'format': u'¤\xa0#,##0.000',
+    },
+}
+
+OSCAR_FROM_EMAIL = DEFAULT_FROM_EMAIL
+
+# allow anonymous user for checkout
+OSCAR_ALLOW_ANON_CHECKOUT = True
+
+# Oscar extended profile
+# AUTH_PROFILE_MODULE = "customaccount.Profile"
+
+# Order statuses
+OSCAR_STATUS_NEW = 'new'  # status of new orders.
+ORDER_STATUS_PAID = 'paid'  # order that is paid
+ORDER_STATUS_CANCELLED = 'cancelled'  # order that is cancelled. # in this situation cancelling order transfer the user refund to his wallet.
+ORDER_STATUS_CLOSED = 'closed'  # order that doesnt need any further actions.
+
+# # Pipeline Config
+
+# Order statuses
+OSCAR_INITIAL_ORDER_STATUS = OSCAR_STATUS_NEW  # The main object
+OSCAR_INITIAL_LINE_STATUS = OSCAR_STATUS_NEW   # The individual lines
+OSCARAPI_INITIAL_ORDER_STATUS = OSCAR_STATUS_NEW
+
+OSCAR_ORDER_STATUS_PIPELINE = {
+    OSCAR_STATUS_NEW: (ORDER_STATUS_PAID, ORDER_STATUS_CANCELLED, ORDER_STATUS_CLOSED),
+    ORDER_STATUS_PAID: (ORDER_STATUS_CANCELLED, ORDER_STATUS_CLOSED),
+    ORDER_STATUS_CANCELLED: (),
+    ORDER_STATUS_CLOSED: (),
+}
+
+# order line status
+OSCAR_LINE_STATUS_PIPELINE = OSCAR_ORDER_STATUS_PIPELINE  # for template just cascade everything to the line
+
+# cascading status from order to line
+OSCAR_ORDER_STATUS_CASCADE = {
+    OSCAR_STATUS_NEW: OSCAR_STATUS_NEW,
+    ORDER_STATUS_PAID: ORDER_STATUS_PAID,
+    ORDER_STATUS_CANCELLED: ORDER_STATUS_CANCELLED,
+    ORDER_STATUS_CLOSED: ORDER_STATUS_CLOSED,
+}
+
+ORDER_STATUS_DISPLAY_NAME = {
+    OSCAR_STATUS_NEW: _("Initiated"),
+    ORDER_STATUS_PAID: _("Order paid"),
+    ORDER_STATUS_CANCELLED: _("Cancelled"),
+    ORDER_STATUS_CLOSED: _("Closed"),
+}
+

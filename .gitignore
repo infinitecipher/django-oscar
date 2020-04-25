@@ -1,0 +1,13 @@
+*.pyc
+
+node_modules/
+_build/
+.vscode
+.DS_Store
+
+# migrations
+*/__pycache__/
+# For development purposes I added site media so the images is included
+*/site_media
+site_media/
+logs/
